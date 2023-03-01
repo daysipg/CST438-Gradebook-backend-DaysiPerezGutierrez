@@ -1,5 +1,6 @@
 package com.cst438.controllers;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -168,6 +169,48 @@ public class GradeBookController {
 		}
 		
 		return assignment;
+	}
+	
+	//delete assignment if there are no grades for the assignment
+	@PutMapping("/assignment/{id}")
+	@Transactional
+	public void deleteAssignment(@PathVariable int assignmentId, String email) {
+		Assignment assignment = checkAssignment(assignmentId, email);
+		
+		if (!assignment.getCourse().getInstructor().equals(email)) {
+			throw new ResponseStatusException( HttpStatus.UNAUTHORIZED, "Not Authorized. " );
+		}
+		if(assignment.getNeedsGrading() == 0) {
+			assignmentRepository.delete(assignment);
+		}
+		
+	}
+	
+	@PutMapping("/assignment/{id}")
+	@Transactional
+	public void changeNameOfAssignment(@PathVariable int assignmentId, @RequestBody String name, String email) {
+		Assignment assignment = checkAssignment(assignmentId, email);
+		
+		if (!assignment.getCourse().getInstructor().equals(email)) {
+			throw new ResponseStatusException( HttpStatus.UNAUTHORIZED, "Not Authorized. " );
+		}
+		if(!(assignment == null)) {
+			assignment.setName(name);
+			assignmentRepository.save(assignment);
+		}
+		
+	}
+	
+	@PostMapping("/assignment/{id}")
+	@Transactional
+	public void addAssignment(@RequestBody String name, @RequestBody Date due_date, @RequestBody Course course_id, String email) {
+		Assignment assignment = new Assignment();
+		assignment.setName(name);
+		assignment.setDueDate(due_date);
+		assignment.setCourse(course_id);
+		assignmentRepository.save(assignment);
+
+		
 	}
 
 }
