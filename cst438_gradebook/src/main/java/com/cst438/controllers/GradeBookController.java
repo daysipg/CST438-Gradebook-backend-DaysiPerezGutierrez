@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -172,7 +173,8 @@ public class GradeBookController {
 	}
 	
 	//delete assignment if there are no grades for the assignment
-	@PutMapping("/assignment/{id}")
+
+	@DeleteMapping("/assignment/{assignmentId}")
 	@Transactional
 	public void deleteAssignment(@PathVariable int assignmentId, String email) {
 		Assignment assignment = checkAssignment(assignmentId, email);
@@ -186,7 +188,7 @@ public class GradeBookController {
 		
 	}
 	
-	@PutMapping("/assignment/{id}")
+	@PutMapping("/assignment/{assignmentId}")
 	@Transactional
 	public void changeNameOfAssignment(@PathVariable int assignmentId, @RequestBody String name, String email) {
 		Assignment assignment = checkAssignment(assignmentId, email);
