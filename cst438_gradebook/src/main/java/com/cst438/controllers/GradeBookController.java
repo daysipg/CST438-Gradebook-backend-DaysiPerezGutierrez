@@ -173,7 +173,6 @@ public class GradeBookController {
 	}
 	
 	//delete assignment if there are no grades for the assignment
-
 	@DeleteMapping("/assignment/{assignmentId}")
 	@Transactional
 	public void deleteAssignment(@PathVariable int assignmentId, String email) {
@@ -188,6 +187,7 @@ public class GradeBookController {
 		
 	}
 	
+	//change the name of an assignment but only if its graded
 	@PutMapping("/assignment/{assignmentId}")
 	@Transactional
 	public void changeNameOfAssignment(@PathVariable int assignmentId, @RequestBody String name, String email) {
@@ -203,6 +203,7 @@ public class GradeBookController {
 		
 	}
 	
+	//creates a new assignment
 	@PostMapping("/assignment/{id}")
 	@Transactional
 	public void addAssignment(@RequestBody String name, @RequestBody Date due_date, @RequestBody Course course_id, String email) {
