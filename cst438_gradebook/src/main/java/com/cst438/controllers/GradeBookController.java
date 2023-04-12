@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -172,14 +173,15 @@ public class GradeBookController {
 		return assignment;
 	}
 	
-	//delete assignment if there are no grades for the assignment
+	//delete assignment if there is no grade for the assignment
 	@DeleteMapping("/assignment/{assignmentId}")
 	@Transactional
-	public void deleteAssignment(@PathVariable int assignmentId, String email) {
-		Assignment assignment = checkAssignment(assignmentId, email);
+	public void deleteAssignment(@PathVariable int assignmentId) {
 		
-		if (!assignment.getCourse().getInstructor().equals(email)) {
-			throw new ResponseStatusException( HttpStatus.UNAUTHORIZED, "Not Authorized. " );
+		Assignment assignment = assignmentRepository.findById(assignmentId).orElse(null);
+		
+		if(assignment == null) {
+			throw new ResponseStatusException( HttpStatus.UNAUTHORIZED, "Assignment not found." );
 		}
 		if(assignment.getNeedsGrading() == 0) {
 			assignmentRepository.delete(assignment);
@@ -206,14 +208,13 @@ public class GradeBookController {
 	//creates a new assignment
 	@PostMapping("/assignment/{id}")
 	@Transactional
-	public void addAssignment(@RequestBody String name, @RequestBody Date due_date, @RequestBody Course course_id, String email) {
+	public Assignment addAssignment(@RequestParam("name") String name, @RequestParam("due_date") Date due_date) {
 		Assignment assignment = new Assignment();
 		assignment.setName(name);
 		assignment.setDueDate(due_date);
-		assignment.setCourse(course_id);
 		assignmentRepository.save(assignment);
 
-		
+		return assignment;
 	}
 	
 
